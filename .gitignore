@@ -1,3 +1,9 @@
+venv/
+
+### Django migrations
+**/migrations/**
+!**/migrations/__init__.py
+
 ### Python template
 # Byte-compiled / optimized / DLL files
 __pycache__/
