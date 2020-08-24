@@ -1,0 +1,57 @@
+{% extends 'parsing/site_list.html' %}
+{% load static i18n tags %}
+
+{% block title %}
+{{block.super}} | {{object.brand}}
+{% endblock %}
+
+{% block crumb %}
+{{block.super}}
+<li class="breadcrumb-item"><a href="{% url 'parsing:site-detail' object.pk %}">{{object.brand}}</a></li>
+{% endblock %}
+
+{% block page_title %}
+{{object.brand}}
+{% endblock %}
+
+{% block content %}
+<div class="col-md-12">
+  <div class="card">
+    <div class="card-header border-0">
+      <h3 class="card-title">{% trans 'Sitemaps' %}</h3>
+      <div class="card-tools">
+	<a class="btn-sm" href="{% url 'parsing:sitemap-create' %}">
+	  <i class="fa fa-plus"></i>
+	  {% trans 'Add' %}
+	</a>
+      </div>
+    </div>
+    <div class="card-body table-responsive p-0">
+      <table class="table table-striped table-valign-middle">
+	<thead>
+	  <tr>
+	    <th>{% trans 'Sitemap' %}</th>
+	    <th>{% trans 'Site' %}</th>
+	    <th>{% trans 'Action' %}</td>
+	  </tr>
+	</thead>
+	
+	<tbody>
+	  {% for item in object.sitemap_set.all %}
+	  <tr>
+	    <td>{{item.url}}</td>
+	    <td>{{item.site}}</td>
+	    <td>
+	      <a class="text-muted" href="{% url 'parsing:site-detail' item.pk %}"><i class="fas fa-sitemap"></i></a>
+	      <a class="text-muted" href="{% url 'parsing:site-delete' item.pk %}"><i class="fas fa-trash"></i></a>
+	    </td>
+	  </tr>
+	  {% endfor %}
+	</tbody>
+
+      </table>
+    </div>
+  </div>
+  <!-- /.card -->
+</div>
+{% endblock %}

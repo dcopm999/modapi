@@ -1,4 +1,13 @@
-venv/
+venv/ 
+*[~#] 
+package-lock.json
+
+### Migrations ###
+migrations/**
+!migrations/__init__.py
+
+### AdminLTE
+coreapi/static/AdminLTE
 
 ### Django migrations
 **/migrations/**

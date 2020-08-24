@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}
+{{block.super}} | {% trans 'Parsing' %}
+{% endblock %}
+
+
+{% block left_menu %}
+<ul class="nav flex-column">
+
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'parsing:site-list' %}">Site</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'parsing:sitemap-list' %}">Sitemap</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'parsing:goodurl-list' %}">GoodURL</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link disabled" href="#">Disabled</a>
+  </li>
+  </ul>
+{% endblock %}
+
+<!-- Their site uses old school block layout -->
+{% block extra_js %}
+
+<!-- Your package using 2SoD block layout -->
+{% block javascript %}
+{{block.super}}
+<script src="{% static 'js/ninja.js' %}" type="text/javascript"></script>
+{% endblock javascript %}
+
+{% endblock extra_js %}
+

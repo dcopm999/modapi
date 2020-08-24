@@ -1,3 +1,4 @@
+
 """
 Base settings to build other settings files upon.
 """
@@ -61,7 +62,7 @@ DJANGO_APPS = [
     "django.contrib.sites",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # "django.contrib.humanize", # Handy template tags
+    #"django.contrib.humanize", # Handy template tags
     "django.contrib.admin",
     "django.forms",
 ]
@@ -77,10 +78,10 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
+    "tags",
     "coreapi.users.apps.UsersConfig",
     "parsing",
     "goods",
-
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -131,6 +132,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.contrib.sites.middleware.CurrentSiteMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -254,7 +256,23 @@ LOGGING = {
             "formatter": "verbose",
         }
     },
-    "root": {"level": "INFO", "handlers": ["console"]},
+    "loggers": {
+        'django': {
+            'handlers': ['console'],
+            'level': "INFO",
+            'propagate': False,
+        },
+        "parsing.spiders": {
+            "level": "DEBUG",
+            "handlers": ["console"],
+            'propagate': False,
+        },
+        "parsing.components":{
+            "level": "INFO",
+            "handlers": ["console"],
+            'propagate': False,
+        }
+    },
 }
 
 # Celery
@@ -282,7 +300,6 @@ CELERY_TASK_SOFT_TIME_LIMIT = 10*60
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_IGNORE_RESULT = True
 CELERYD_PREFETCH_MULTIPLIER = 1
-
 
 # django-allauth
 # ------------------------------------------------------------------------------

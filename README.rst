@@ -10,6 +10,12 @@ Mod.co CoreAPI
      :target: https://github.com/ambv/black
      :alt: Black code style
 
+System requirements
+-------------------
+::
+
+   $sudo apti install libffi-dev libpq-dev
+
 
 Settings
 --------

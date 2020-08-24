@@ -1,0 +1,49 @@
+{% extends 'parsing/sitemap_list.html' %}
+{% load i18n crispy_forms_tags %}
+
+{% block title %}
+{{block.super}}
+{% endblock %}
+
+{% block crumb %}
+{{block.super}}
+<li class="breadcrumb-item">
+  <a href="{{object.get_absolute_url}}">
+    {% if 'update' in request.path %}
+    {% trans 'Change' %}
+    {% else %}
+    {% trans 'Add' %}
+    {% endif %}
+  </a>
+</li>
+{% endblock %}
+
+{% block content %}
+<div class="offset-md-2 col-md-8">
+  <div class="card card-default">
+    <div class="card-header">
+      <h3 class="card-title">
+	{% if 'update' in object.get_absolute_url %}
+	{% trans 'Change' %}
+	{% else %}
+	{% trans 'Add' %}
+	{% endif %}
+      </h3>
+    </div>
+    <!-- /.card-header -->
+    <!-- form start -->
+    <form role="form" method="POST">
+      {% csrf_token %}
+      <div class="card-body">
+	{{form|crispy}}
+      </div>
+      <!-- /.card-body -->
+      
+      <div class="card-footer">
+	<button class="btn btn-default" onclick="window.history.back()">{% trans 'Cancel' %}</button>
+	<input class="btn btn-primary float-right" type="submit">
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
