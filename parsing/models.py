@@ -19,8 +19,8 @@ class Site(models.Model):
     brand = models.ForeignKey(goods_models.Brand, on_delete=models.CASCADE, verbose_name=_('Brand'))
     url = models.URLField(db_index=True, verbose_name=_('Site url'))
     slug = models.SlugField(blank=True, verbose_name=_('Slug'))
-    schedule = models.ForeignKey(IntervalSchedule, on_delete=models.SET_DEFAULT, default=None, blank=True, null=True)
-    task = models.ForeignKey(PeriodicTask, on_delete=models.SET_DEFAULT, default=None, blank=True, null=True)
+    schedule = models.ForeignKey(IntervalSchedule, on_delete=models.SET_NULL, null=True)
+    task = models.ForeignKey(PeriodicTask, on_delete=models.SET_NULL, null=True, blank=True)
     enabled = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
@@ -53,7 +53,6 @@ class Site(models.Model):
 
     def save(self, *args, **kwargs) -> None:
         self.slug = slugify(self.brand.name)
-        self.task = self.task_create_or_update()
         super(Site, self).save(*args, **kwargs)
 
     class Meta:
@@ -67,8 +66,8 @@ class Sitemap(models.Model):
     site = models.ForeignKey(Site, on_delete=models.CASCADE, verbose_name=_('Site'))
     url = models.URLField(db_index=True, verbose_name=_('url'))
     lastmod = models.DateField(blank=True, null=True, verbose_name=_('Last modefication'))
-    schedule = models.ForeignKey(IntervalSchedule, on_delete=models.SET_DEFAULT, default=None, blank=True, null=True)
-    task = models.ForeignKey(PeriodicTask, on_delete=models.SET_DEFAULT, default=None, blank=True, null=True)
+    schedule = models.ForeignKey(IntervalSchedule, on_delete=models.SET_NULL, null=True)
+    task = models.ForeignKey(PeriodicTask, on_delete=models.SET_NULL, blank=True, null=True)
     enabled = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
@@ -103,10 +102,6 @@ class Sitemap(models.Model):
     def task_now(self) -> str:
         return celery_app.send_task(self.task.task, kwargs=json.loads(self.task.kwargs))
 
-    def save(self, *args, **kwargs) -> None:
-        self.task = self.task_create_or_update()
-        super(Sitemap, self).save(*args, **kwargs)
-
     class Meta:
         verbose_name = _('Sitemap url')
         verbose_name_plural = _('Sitemap urls')
@@ -118,8 +113,8 @@ class GoodURL(models.Model):
     sitemap = models.ForeignKey(Sitemap, on_delete=models.CASCADE, verbose_name=_('Sitemap'))
     url = models.URLField(db_index=True, max_length=300, verbose_name=_('Site url'))
     lastmod = models.DateField(blank=True, null=True, verbose_name=_('Last modefication'))
-    schedule = models.ForeignKey(IntervalSchedule, on_delete=models.SET_DEFAULT, default=None, blank=True, null=True)
-    task = models.ForeignKey(PeriodicTask, on_delete=models.SET_DEFAULT, default=None, blank=True, null=True)
+    schedule = models.ForeignKey(IntervalSchedule, on_delete=models.SET_NULL, null=True)
+    task = models.ForeignKey(PeriodicTask, on_delete=models.SET_NULL, null=True)
     enabled = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
@@ -148,19 +143,14 @@ class GoodURL(models.Model):
                 enabled = self.enabled,
             )
         else:
-            task = self.task
             task.interval = self.schedule
             task.kwargs = json.dumps({'url': self.url, 'mapping': self.mapping()})
             task.enabled = self.enabled
-        task.save()
+            task.save()
         return task
 
     def task_now(self) -> str:
         return celery_app.send_task(self.task.task, kwargs=json.loads(self.task.kwargs))
-
-    def save(self, *args, **kwargs) -> None:
-        self.task = self.task_create_or_update()
-        super(GoodURL, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = _('Good URL')
