@@ -86,7 +86,7 @@ class Sitemap(models.Model):
             )
             task = PeriodicTask(
                 interval = schedule,
-                name = f'{self.site.brand.name}.{self.url}.sitemap',
+                name = f'{self.site.brand.name}.sitemap.{self.url}',
                 task = 'parsing.tasks.sitemap',
                 kwargs = json.dumps({'url': self.url}),
                 enabled = self.enabled,
@@ -114,7 +114,7 @@ class GoodURL(models.Model):
     url = models.URLField(db_index=True, max_length=300, verbose_name=_('Site url'))
     lastmod = models.DateField(blank=True, null=True, verbose_name=_('Last modefication'))
     schedule = models.ForeignKey(IntervalSchedule, on_delete=models.SET_NULL, null=True)
-    task = models.ForeignKey(PeriodicTask, on_delete=models.SET_NULL, null=True)
+    task = models.ForeignKey(PeriodicTask, on_delete=models.SET_NULL, blank=True, null=True)
     enabled = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
@@ -130,7 +130,7 @@ class GoodURL(models.Model):
         return self.sitemap.site.brand
     
     def task_create_or_update(self):
-        if self.task is None:
+        if not self.task:
             schedule, created = IntervalSchedule.objects.get_or_create(
                 every=1,
                 period=IntervalSchedule.DAYS,
@@ -146,7 +146,7 @@ class GoodURL(models.Model):
             task.interval = self.schedule
             task.kwargs = json.dumps({'url': self.url, 'mapping': self.mapping()})
             task.enabled = self.enabled
-            task.save()
+        task.save()
         return task
 
     def task_now(self) -> str:
