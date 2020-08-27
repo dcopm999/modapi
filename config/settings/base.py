@@ -173,6 +173,7 @@ TEMPLATES = [
         # https://docs.djangoproject.com/en/dev/ref/settings/#template-dirs
         "DIRS": [str(APPS_DIR.path("templates"))],
         "OPTIONS": {
+            'debug': DEBUG,
             # https://docs.djangoproject.com/en/dev/ref/settings/#template-loaders
             # https://docs.djangoproject.com/en/dev/ref/templates/api/#loader-types
             "loaders": [
@@ -251,19 +252,35 @@ LOGGING = {
     },
     "handlers": {
         "console": {
-            "level": "DEBUG",
+            "level": "INFO",
             "class": "logging.StreamHandler",
             "formatter": "verbose",
-        }
+        },
+        'syslog': {
+            "level": "INFO",
+            "class": "logging.handlers.SysLogHandler",
+            "formatter": "verbose",
+        },
     },
     "loggers": {
         'django': {
+            'handlers': ['console', 'syslog'],
+            'level': "INFO",
+            'propagate': False,
+            'facility': 'daemon',
+        },
+        'django.db.backends': {
             'handlers': ['console'],
             'level': "INFO",
             'propagate': False,
         },
+        "parsing.signals": {
+            "level": "INFO",
+            "handlers": ["console"],
+            'propagate': False,
+        },
         "parsing.spiders": {
-            "level": "DEBUG",
+            "level": "INFO",
             "handlers": ["console"],
             'propagate': False,
         },
