@@ -21,7 +21,7 @@ class SitemapAdmin(admin.ModelAdmin):
 @admin.register(models.GoodURL)
 class GoodURLAdmin(admin.ModelAdmin):
     list_display = ['sitemap', 'url', 'edited', 'created', 'enabled']
-    list_filter = ['sitemap', ]
+    list_filter = ['sitemap', 'enabled']
     date_hierarchy = 'edited'
     search_fields = ['sitemap__url', 'url']
 
